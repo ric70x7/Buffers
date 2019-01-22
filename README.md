@@ -1,3 +1,3 @@
 # Buffers
 
-Just a repo to show some buffer functions and practice tests.
+Simple code to define buffers as a geopandas object.
