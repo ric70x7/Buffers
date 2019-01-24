@@ -3,6 +3,7 @@ import geopandas as geop
 from shapely import geometry
 from shapely.ops import polygonize
 from scipy.spatial import Voronoi
+import json
 
 def voronoi_polygons(X, margin=0):
     '''
@@ -101,3 +102,15 @@ def disjoint_polygons(X, radius, n_angles=8):
     dispol = [vi.intersection(pi) for vi,pi in zip(vorpol.geometry, regpol.geometry)]
 
     return geop.GeoDataFrame({'geometry': geometry.MultiPolygon(dispol)})
+
+
+def dock_deploy(js):
+    X = json.loads(js)
+    X = np.array(X)
+    P = voronoi_polygons(X)
+    output = json.dumps(True)
+    return output
+
+
+
+
