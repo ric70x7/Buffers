@@ -21,7 +21,6 @@ class BuffersTests(unittest.TestCase):
 
     def test_regular_polygons(self):
 
-        raise NotImplementedError
         self.assertRaises(AssertionError, regular_polygons, X=X.flatten(), radius=.1)
         self.assertRaises(AssertionError, regular_polygons, X=X.T, radius=.1)
         self.assertRaises(AssertionError, regular_polygons, X=X, radius=0)
