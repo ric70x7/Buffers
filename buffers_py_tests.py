@@ -1,7 +1,6 @@
 import pytest
 import geopandas as geop
 from buffers import *
-from unittest.mock import patch
 import pytest
 
 # Inputs
@@ -11,9 +10,10 @@ vrad = np.linspace(.1, 1, 10)
 
 def test_vornoi_polygons():
     with pytest.raises(AssertionError):
-       voronoi_polygons(X.flatten())
-       voronoi_polygons(X.T)
-    vorpol = voronoi_polygons(X)
+       voronoi_polygons(X=0)
+       voronoi_polygons(X=X.flatten())
+       voronoi_polygons(X=X.T)
+    vorpol = voronoi_polygons(X=X)
     assert isinstance(vorpol, geop.GeoDataFrame)
     assert vorpol.shape[0] == X.shape[0]
 
