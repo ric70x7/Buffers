@@ -4,11 +4,14 @@ from buffers import *
 import pytest
 
 # Inputs
-X = np.random.normal(0, 1, 20).reshape(-1, 2)
 vrad = np.linspace(.1, 1, 10)
 
+@pytest.fixture(scope='module')
+def X():
+    return np.random.normal(0, 1, 20).reshape(-1, 2)
 
-def test_vornoi_polygons():
+
+def test_vornoi_polygons(X):
     with pytest.raises(AssertionError):
        voronoi_polygons(X=0)
        voronoi_polygons(X=X.flatten())
@@ -18,7 +21,7 @@ def test_vornoi_polygons():
     assert vorpol.shape[0] == X.shape[0]
 
 
-def test_regular_polygons():
+def test_regular_polygons(X):
     with pytest.raises(AssertionError):
         regular_polygons(X.flatten(), radius=.1)
         regular_polygons(X.T, radius=.1)
@@ -36,7 +39,7 @@ def test_regular_polygons():
     assert X.shape[0] == regpol.shape[0]
 
 
-def test_disjoint_polygons():
+def test_disjoint_polygons(X):
     dispol = disjoint_polygons(X, radius=.1, n_angles=6)
     assert isinstance(dispol, geop.GeoDataFrame)
     assert X.shape[0] == dispol.shape[0]
