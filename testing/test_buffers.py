@@ -5,16 +5,18 @@ import pytest
 
 # Inputs
 vrad = np.linspace(.1, 1, 10)
+X = np.random.normal(0, 1, 20).reshape(-1, 2)
 
 @pytest.fixture(scope='module')
 def X():
     return np.random.normal(0, 1, 20).reshape(-1, 2)
 
-
 def test_vornoi_polygons(X):
     with pytest.raises(AssertionError):
        voronoi_polygons(X=0)
+    with pytest.raises(AssertionError):
        voronoi_polygons(X=X.flatten())
+    with pytest.raises(AssertionError):
        voronoi_polygons(X=X.T)
     vorpol = voronoi_polygons(X=X)
     assert isinstance(vorpol, geop.GeoDataFrame)
@@ -24,10 +26,15 @@ def test_vornoi_polygons(X):
 def test_regular_polygons(X):
     with pytest.raises(AssertionError):
         regular_polygons(X.flatten(), radius=.1)
+    with pytest.raises(AssertionError):
         regular_polygons(X.T, radius=.1)
+    with pytest.raises(AssertionError):
         regular_polygons(X, radius=0)
+    with pytest.raises(AssertionError):
         regular_polygons(X, radius=.1, n_angles=2)
+    with pytest.raises(AssertionError):
         regular_polygons(X, radius=vrad[:, None], n_angles=2)
+    with pytest.raises(AssertionError):
         regular_polygons(X, radius=vrad[:5], n_angles=2)
 
     regpol = regular_polygons(X, radius=.1, n_angles=6)
