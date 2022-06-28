@@ -2,3 +2,4 @@ numpy
 geopandas
 shapely
 scipy
+pygeos
