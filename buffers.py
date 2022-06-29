@@ -154,7 +154,7 @@ def disjoint_polygons(X: np.ndarray, radius: list, num_angles: int=8):
     :return: Geopandas data frame.
     '''
     assert np.all([ri > 0 for ri in radius]), 'radius values must be positive'
-    vorpol = voronoi_polygons(X, radius=radius)
+    vorpol = voronoi_polygons(X, radius=[2*ri for ri in radius])
     regpol = regular_polygons(X, radius=radius, num_angles=num_angles)
     dispol = [
         vi.intersection(pi) for vi,pi in zip(vorpol.geometry, regpol.geometry)
