@@ -6,6 +6,17 @@ from scipy.spatial import Voronoi, ConvexHull
 
 
 def clouds(X: np.ndarray, radius: list, num_points: float=8):
+    '''
+    Create a set of points around each point in a 2D array X.
+
+    Args:
+        param X: Array of points with shape (n, 2).
+        param radius: Distance from each point in the cloud to the point Xi.
+        param num_points: Number of points to return for each point in X.
+
+    Returns:
+        List of 2D arrays
+    '''
     vertex = np.pi * np.linspace(0, 2, num_points + 1)
 
     if len(radius) != 2:
@@ -26,6 +37,19 @@ def clouds(X: np.ndarray, radius: list, num_points: float=8):
 
 
 def buffer(X: np.ndarray, radius: list=None, num_points: int=12):
+    '''
+    Define a buffer zone around a set of points X.
+
+    Args:
+        param X: Array of points with shape (n, 2).
+        param radius: Minumum distance from the points to the buffer boundary.
+        If radius is None the distance is zero.
+        param num_points: Number of points to return for each point in X.
+        Default value is 12.
+
+    Returns:
+        A shapely polygon
+    '''
 
     if radius is not None:
         X_cloud = np.vstack(clouds(X, radius=radius, num_points=num_points))
@@ -38,17 +62,16 @@ def buffer(X: np.ndarray, radius: list=None, num_points: int=12):
 
 def regular_polygons(X: np.ndarray, radius: list, num_angles: int=8):
     '''
-    Return a set of regular polygons around points X.
+    Define a set of regular polygons around the points X.
 
-    :param X: Array of points with shape = [n, 2].
+    Args:
+        param X: Array of points with shape (n, 2).
+        param radius: Circumradius of the polygon.
+        param num_angles: Number of angles of each polygon. Must be >= 3.
 
-    :param radius: Circumradius of the polygon.
-
-    :param num_angles: Number of angles of each polygon.>= 3.
-
-    :return: Geopandas data frame.
+    Returns:
+        Geopandas data frame.
     '''
-
     polygons = clouds(X, radius=radius, num_points=num_angles)
     return gpd.GeoDataFrame(
         {
@@ -60,14 +83,14 @@ def regular_polygons(X: np.ndarray, radius: list, num_angles: int=8):
 
 def voronoi_polygons(X: np.ndarray, radius: list = None):
     '''
-    Returns a set of Voronoi polygons corresponding to a set of points X.
+    Define a set of Voronoi polygons based on a set of points X.
 
-    :param X: Array of points (optional).
-              Numpy array, shape = [n, 2].
+    Args:
+        param X: Array of points with shape (n, 2).
+        param radius: Minumum distance from the points to the polygons.
 
-    :param radius: Minimum margin to extend the outer polygons of the tessellation.
-
-    :return: Geopandas data frame.
+    Returns:
+        Geopandas data frame.
     '''
     if X.shape[1] != 2:
         raise ValueError('Function only implemented for 2D spaces.')
@@ -118,19 +141,19 @@ def voronoi_polygons(X: np.ndarray, radius: list = None):
 
 def disjoint_polygons(X: np.ndarray, radius: list, num_angles: int=8):
     '''
-    Return a set of disjoint polygons around points X.
+    Define a set of non overlapping polygons around the points X.
 
-    :param X: Array of points (optional).
-              Numpy array, shape = [n, 2].
+    Args:
+        param X: Array of points with shape (n, 2).
+        param radius: Circumradius of the polygon.
+        param num_angles: Number of angles of each polygon. Must be >= 3.
 
-    :param radius: Circumradius of the polygon.
-                   Positive float.
-
-    :param num_angles: Number of angles of each polygon.
-                     Integer >= 3.
+    Returns:
+        Geopandas data frame.
 
     :return: Geopandas data frame.
     '''
+    assert np.all([ri > 0 for ri in radius]), 'radius values must be positive'
     vorpol = voronoi_polygons(X, radius=radius)
     regpol = regular_polygons(X, radius=radius, num_angles=num_angles)
     dispol = [
